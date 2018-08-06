@@ -6,4 +6,4 @@ Many thanks to the [TMdbEasy](https://github.com/tonykaralis/TMdbEasy) library o
 **NOTE:** This doesn't compile yet as I'm waiting a [NuGet](https://www.nuget.org) package update.
 
 ## License
-This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - see the [gpl-3.0](https://www.gnu.org/licenses/gpl-3.0.html) file for details.
+This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - see the [LICENSE](LICENSE) file for details.
