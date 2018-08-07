@@ -3,7 +3,6 @@ A library to help enumerate both movie files and directories containing TV show 
 As for now this library doesn't provide asynchronous methods but will do in the future.
 
 Many thanks to the [TMdbEasy](https://github.com/tonykaralis/TMdbEasy) library of which this project is depending on.
-**NOTE:** This doesn't compile yet as I'm waiting a [NuGet](https://www.nuget.org) package update.
 
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - see the [LICENSE](LICENSE) file for details.
