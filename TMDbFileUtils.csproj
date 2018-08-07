@@ -11,6 +11,7 @@
     <AssemblyName>TMDbFileUtils</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,7 +43,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="TMdbEasy, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TMdbEasy.0.3.2\lib\net461\TMdbEasy.dll</HintPath>
+      <HintPath>..\packages\TMdbEasy.0.3.3\lib\net461\TMdbEasy.dll</HintPath>
     </Reference>
     <Reference Include="VPKSoft.Utils, Version=1.0.3.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VPKSoft.Utils.1.0.3.2\lib\net45\VPKSoft.Utils.dll</HintPath>
