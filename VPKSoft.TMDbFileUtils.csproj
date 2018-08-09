@@ -7,8 +7,8 @@
     <ProjectGuid>{7417525F-2F3D-4208-82DC-3A5439E159CE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TMDbFileUtils</RootNamespace>
-    <AssemblyName>TMDbFileUtils</AssemblyName>
+    <RootNamespace>VPKSoft.TMDbFileUtils</RootNamespace>
+    <AssemblyName>VPKSoft.TMDbFileUtils</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\VPKSoft.TMDbFileUtils.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\VPKSoft.TMDbFileUtils.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -45,17 +47,14 @@
     <Reference Include="TMdbEasy, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TMdbEasy.0.3.3\lib\net461\TMdbEasy.dll</HintPath>
     </Reference>
-    <Reference Include="VPKSoft.Utils, Version=1.0.3.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VPKSoft.Utils.1.0.3.2\lib\net45\VPKSoft.Utils.dll</HintPath>
+    <Reference Include="VPKSoft.Utils, Version=1.0.3.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VPKSoft.Utils.1.0.3.4\lib\net45\VPKSoft.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TMDbConfigCache.cs" />
     <Compile Include="TMDbFileEnumerator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="history.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

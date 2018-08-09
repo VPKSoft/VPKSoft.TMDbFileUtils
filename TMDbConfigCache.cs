@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using TMdbEasy;
+using TMdbEasy; 
 using TMdbEasy.ApiInterfaces;
 using TMdbEasy.TmdbObjects.Configuration;
 using VPKSoft.Utils;
 
-namespace TMDbFileUtils
+namespace VPKSoft.TMDbFileUtils
 {
     /// <summary>
     /// A helper class to store a TMDb configuration to a XML file, so it doesn't need to be requested all the time a software starts executing.
