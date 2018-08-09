@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://raw.githubusercontent.com/VPKSoft/VPKSoft.TMDbFileUtils/master/LICENSE</licenseUrl>
+    <projectUrl>https://www.vpksoft.net/2-uncategorised/140-vpksoft-tmdbfileutils</projectUrl>
+    <iconUrl>https://www.vpksoft.net/site/VPKSoft.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial nuget release.</releaseNotes>
+    <copyright>Copyright © VPKSoft 2018</copyright>
+    <tags>TMDb VPKSoft wrapper</tags>
+  </metadata>
+</package>
