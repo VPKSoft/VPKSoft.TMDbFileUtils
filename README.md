@@ -4,5 +4,11 @@ As for now this library doesn't provide asynchronous methods but will do in the 
 
 Many thanks to the [TMdbEasy](https://github.com/tonykaralis/TMdbEasy) library of which this project is depending on.
 
+## Released a NuGet
+[NuGet](https://www.nuget.org/packages/VPKSoft.TMDbFileUtils/)
+
+## Updated web site
+[TMDbFileUtils](https://www.vpksoft.net/2015-03-31-13-33-28/libraries/vpksoft-tmdbfileutils)
+
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - see the [LICENSE](LICENSE) file for details.
