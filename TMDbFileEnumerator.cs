@@ -226,7 +226,7 @@ namespace VPKSoft.TMDbFileUtils
         /// <returns>A string which should be suitable search string for the TMDb for a TV show.</returns>
         private static string GetTVShowSearchString(string path)
         {
-            string searchString = new DirectoryInfo(Path.GetDirectoryName(path).Name; // the last path part..
+            string searchString = new DirectoryInfo(Path.GetDirectoryName(path)).Name; // the last path part..
             searchString = // multiple regular expressions as the programmer is not a guru with them..
                 Regex.Replace(searchString, @"Season [0-9]+", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Trim();
             searchString =
