@@ -114,6 +114,61 @@ namespace VPKSoft.TMDbFileUtils
         }
 
         /// <summary>
+        /// Gets details for movie file from a given file name from the TMDb database.
+        /// </summary>
+        /// <param name="easy">An instance to a TMdbEasy.EasyClient class instance.</param>
+        /// <param name="fileName">A file name to get movie information from the TMDb database.</param>
+        /// <param name="posterSize">The size of the poster to get the URL for.</param>
+        /// <returns>A TMDbDetail class instance containing the movie information from the TMDb database.</returns>
+        public static TMDbDetail GetMovie(EasyClient easy, string fileName, string posterSize = "original")
+        {
+            return GetMovieAsync(easy, fileName, posterSize).Result;
+        }
+
+        /// <summary>
+        /// Gets details for movie file from a given file name from the TMDb database.
+        /// </summary>
+        /// <param name="easy">An instance to a TMdbEasy.EasyClient class instance.</param>
+        /// <param name="fileName">A file name to get movie information from the TMDb database.</param>
+        /// <param name="posterSize">The size of the poster to get the URL for.</param>
+        /// <returns>A TMDbDetail class instance containing the movie information from the TMDb database.</returns>
+        public static async Task<TMDbDetail> GetMovieAsync(EasyClient easy, string fileName, string posterSize = "original")
+        {
+            var movieApi = easy.GetApi<IMovieApi>().Value; // create a IMovieApi..
+
+            // get the file name without extension and without path..
+            string fileNameNoExt = Path.GetFileNameWithoutExtension(fileName);
+
+            // query the movie from the TMDb database..
+            MovieList list = await movieApi.SearchMoviesAsync(fileNameNoExt).ConfigureAwait(false);
+
+            // if something was found..
+            if (list != null && list.Total_results > 0)
+            {
+                return new TMDbDetail() // return the details of the movie..
+                {
+                    ID = list.Results[0].Id, // the first result is only taken into account..
+                    Title = list.Results[0].Title, // set the title..
+                    Description = list.Results[0].Overview, // set the overview..
+                    FileName = Path.GetFileName(fileName), // set the file name..
+
+                    // create an Uri for the poster path..
+                    PosterOrStillURL = new Uri("https://image.tmdb.org/t/p/" + posterSize + list.Results[0].Poster_path)
+                };
+            }
+            else // nothing was found..
+            {
+                return new TMDbDetail()
+                {
+                    Title = fileNameNoExt, // the title can be the file name without path or extension..
+                    Description = fileNameNoExt, // the description can be the file name without path or extension..
+                    FileName = Path.GetFileName(fileName) // set the file name..
+                };
+            }
+        }
+
+
+        /// <summary>
         /// Gets details for movie files from a given path from the TMDb database.
         /// </summary>
         /// <param name="easy">An instance to a TMdbEasy.EasyClient class instance.</param>
@@ -125,7 +180,7 @@ namespace VPKSoft.TMDbFileUtils
             var movieApi = easy.GetApi<IMovieApi>().Value; // create a IMovieApi..
 
             // List files of known video formats from the given path..
-            IEnumerable<FileEnumeratorFileEntry> fileEntries = 
+            IEnumerable<FileEnumeratorFileEntry> fileEntries =
                 await FileEnumerator.RecurseFilesAsync(path, FileEnumerator.FiltersVideoVlcNoBinNoIso).ConfigureAwait(false);
 
             // initialize the result..
@@ -171,7 +226,7 @@ namespace VPKSoft.TMDbFileUtils
         /// <returns>A string which should be suitable search string for the TMDb for a TV show.</returns>
         private static string GetTVShowSearchString(string path)
         {
-            string searchString = new DirectoryInfo(path).Name; // the last path part..
+            string searchString = new DirectoryInfo(Path.GetDirectoryName(path).Name; // the last path part..
             searchString = // multiple regular expressions as the programmer is not a guru with them..
                 Regex.Replace(searchString, @"Season [0-9]+", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Trim();
             searchString =
@@ -182,7 +237,7 @@ namespace VPKSoft.TMDbFileUtils
                 Regex.Replace(searchString, @"[0-9]+", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Trim();
             return searchString; // return the string..
         }
-        
+
         /// <summary>
         /// Gets a TV show episode number of a given path string.
         /// </summary>
@@ -219,7 +274,7 @@ namespace VPKSoft.TMDbFileUtils
             }
             return -1; // just return -1..
         }
-        
+
         /// <summary>
         /// Gets the TV show season number from a given path string.
         /// </summary>
@@ -227,7 +282,7 @@ namespace VPKSoft.TMDbFileUtils
         /// <returns></returns>
         private static int GetTVShowSeason(string path)
         {
-            string searchString = new DirectoryInfo(path).Name; // the last path part..
+            string searchString = new DirectoryInfo(Path.GetDirectoryName(path)).Name; // the last path part..
 
             searchString = Regex.Match(searchString, @"-?\d+").Value; // find a number from the path part..
             if (int.TryParse(searchString, out _)) // check for a valid integer..
@@ -243,9 +298,9 @@ namespace VPKSoft.TMDbFileUtils
         /// <summary>
         /// A list of possible naming conventions for a TV show episode file name.
         /// </summary>
-        public static List<string> EpisodeNamingStyles { get; set; } = 
+        public static List<string> EpisodeNamingStyles { get; set; } =
             new List<string>(
-                new string[] 
+                new string[]
                 {
                     "s{0:00}e{1:00}", // SomeShow S01E01.*
                     "s{0}e{1}",       // SomeShow S1E1.*
@@ -303,10 +358,11 @@ namespace VPKSoft.TMDbFileUtils
         /// <param name="easy">A TMdbEasy.EasyClient class instance to use for the search.</param>
         /// <param name="path">A path to enumerate files from.</param>
         /// <param name="stillSize">The size of the still image to get the URL for.</param>
+        /// <param name="excludeFileNames">File names to be left out of the search.</param>
         /// <returns>A collection of TMDbDetail class instances containing the TV show season information from the TMDb database.</returns>
-        public static IEnumerable<TMDbDetail> GetSeason(EasyClient easy, string path, string stillSize = "original")
+        public static IEnumerable<TMDbDetail> GetSeason(EasyClient easy, string path, string stillSize = "original", List<string> excludeFileNames = null)
         {
-            return GetSeasonAsync(easy, path, stillSize).Result;
+            return GetSeasonAsync(easy, path, stillSize, excludeFileNames).Result;
         }
 
         /// <summary>
@@ -315,14 +371,32 @@ namespace VPKSoft.TMDbFileUtils
         /// <param name="easy">A TMdbEasy.EasyClient class instance to use for the search.</param>
         /// <param name="path">A path to enumerate files from.</param>
         /// <param name="stillSize">The size of the still image to get the URL for.</param>
+        /// <param name="excludeFileNames">File names to be left out of the search.</param>
         /// <returns>A collection of TMDbDetail class instances containing the TV show season information from the TMDb database.</returns>
-        public static async Task<IEnumerable<TMDbDetail>> GetSeasonAsync(EasyClient easy, string path, string stillSize = "original")
+        public static async Task<IEnumerable<TMDbDetail>> GetSeasonAsync(EasyClient easy, string path, string stillSize = "original", List<string> excludeFileNames = null)
         {
             var televisionApi = easy.GetApi<ITelevisionApi>().Value; // create a ITelevisionApi..
+
+            // avoid the null value..
+            excludeFileNames = excludeFileNames ?? new List<string>();
 
             // List files of known video formats from the given path..
             IEnumerable<FileEnumeratorFileEntry> fileEntries =
                 await FileEnumerator.RecurseFilesAsync(path, FileEnumerator.FiltersVideoVlcNoBinNoIso).ConfigureAwait(false);
+
+            // remove the "useless" files from the list..
+            List<FileEnumeratorFileEntry> tmpFilesList = new List<FileEnumeratorFileEntry>();
+            foreach(FileEnumeratorFileEntry entry in fileEntries.ToList())
+            {
+                // excluded from the list..
+                if (excludeFileNames.Contains(entry.FileName))
+                {
+                    continue; // ..so do continue..
+                }
+                tmpFilesList.Add(entry); // ..else add to the list..
+            }
+
+            fileEntries = tmpFilesList; // re-assign the list back to the source..
 
             // don't start searching if the directory is empty - we don't want to cause excess stress for the TMDb database..
             if (fileEntries.ToList().Count == 0)
@@ -407,6 +481,32 @@ namespace VPKSoft.TMDbFileUtils
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Searches the TMDb database for a TV season based on a given path using a TMdbEasy.EasyClient class instance.
+        /// </summary>
+        /// <param name="easy">A TMdbEasy.EasyClient class instance to use for the search.</param>
+        /// <param name="path">A path to enumerate files from.</param>
+        /// <param name="excludeFileNames">File names to be left out of the search.</param>
+        /// <param name="stillSize">The size of the still image to get the URL for.</param>
+        /// <returns>A collection of TMDbDetail class instances containing the TV show season information from the TMDb database.</returns>
+        public static IEnumerable<TMDbDetail> GetSeason(EasyClient easy, string path, List<string> excludeFileNames, string stillSize = "original")
+        {
+            return GetSeasonAsync(easy, path, stillSize, excludeFileNames).Result;
+        }
+
+        /// <summary>
+        /// Searches the TMDb database for a TV season based on a given path using a TMdbEasy.EasyClient class instance.
+        /// </summary>
+        /// <param name="easy">A TMdbEasy.EasyClient class instance to use for the search.</param>
+        /// <param name="path">A path to enumerate files from.</param>
+        /// <param name="excludeFileNames">File names to be left out of the search.</param>
+        /// <param name="stillSize">The size of the still image to get the URL for.</param>
+        /// <returns>A collection of TMDbDetail class instances containing the TV show season information from the TMDb database.</returns>
+        public static async Task<IEnumerable<TMDbDetail>> GetSeasonAsync(EasyClient easy, string path, List<string> excludeFileNames, string stillSize = "original")
+        {
+            return await GetSeasonAsync(easy, path, stillSize, excludeFileNames).ConfigureAwait(false);
         }
     }
 }
