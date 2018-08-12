@@ -9,9 +9,9 @@
     <licenseUrl>https://raw.githubusercontent.com/VPKSoft/VPKSoft.TMDbFileUtils/master/LICENSE</licenseUrl>
     <projectUrl>https://www.vpksoft.net/2-uncategorised/140-vpksoft-tmdbfileutils</projectUrl>
     <iconUrl>https://www.vpksoft.net/site/VPKSoft.ico</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial nuget release.</releaseNotes>
+    <releaseNotes>Added few overloads. Added possibility to search a single movie or a TV show season with an exclude list.</releaseNotes>
     <copyright>Copyright © VPKSoft 2018</copyright>
     <tags>TMDb VPKSoft wrapper</tags>
   </metadata>
