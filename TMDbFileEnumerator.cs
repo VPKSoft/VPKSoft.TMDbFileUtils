@@ -380,6 +380,14 @@ namespace VPKSoft.TMDbFileUtils
             // avoid the null value..
             excludeFileNames = excludeFileNames ?? new List<string>();
 
+            List<string> includeFiles = new List<string>();
+
+            if (File.Exists(path))
+            {
+                includeFiles.Add(path);
+                path = Path.GetDirectoryName(path);
+            }
+
             // List files of known video formats from the given path..
             IEnumerable<FileEnumeratorFileEntry> fileEntries =
                 await FileEnumerator.RecurseFilesAsync(path, FileEnumerator.FiltersVideoVlcNoBinNoIso).ConfigureAwait(false);
@@ -388,6 +396,12 @@ namespace VPKSoft.TMDbFileUtils
             List<FileEnumeratorFileEntry> tmpFilesList = new List<FileEnumeratorFileEntry>();
             foreach(FileEnumeratorFileEntry entry in fileEntries.ToList())
             {
+                // not in the include list..
+                if (includeFiles.Count > 0 && !includeFiles.Contains(entry.FileName))
+                {
+                    continue; // ..so do continue..
+                }
+
                 // excluded from the list..
                 if (excludeFileNames.Contains(entry.FileName))
                 {
