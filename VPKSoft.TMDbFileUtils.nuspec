@@ -11,7 +11,7 @@
     <iconUrl>https://www.vpksoft.net/site/VPKSoft.ico</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added few overloads. Added possibility to search a single movie or a TV show season with an exclude list.</releaseNotes>
+    <releaseNotes>Added static method IsTVSeasonEpisode(..).</releaseNotes>
     <copyright>Copyright © VPKSoft 2018</copyright>
     <tags>TMDb VPKSoft wrapper</tags>
   </metadata>

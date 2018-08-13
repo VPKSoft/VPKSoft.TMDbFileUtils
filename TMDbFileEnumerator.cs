@@ -366,6 +366,24 @@ namespace VPKSoft.TMDbFileUtils
         }
 
         /// <summary>
+        /// Gets a value indicating if a given file name is a TV show episode by the file name's format.
+        /// </summary>
+        /// <param name="fileName">A file name to check for.</param>
+        /// <param name="searchString">A search string used for the TMdbEasy client.</param>
+        /// <param name="season">A season number extracted from the file name.</param>
+        /// <param name="episode">An episode number extracted from the file name.</param>
+        /// <returns>True if the </returns>
+        public static bool IsTVSeasonEpisode(string fileName, out string searchString, out int season, out int episode)
+        {
+            // construct a search string of the given path..
+            searchString = GetTVShowSearchString(Path.GetDirectoryName(fileName));
+            season = GetTVShowSeason(Path.GetDirectoryName(fileName)); // extract a season number from the given path..
+            episode = GetTVShowEpisodeNumber(Path.GetFileName(fileName));
+
+            return (season != -1 && episode != -1); // return the value..
+        }
+
+        /// <summary>
         /// Searches the TMDb database for a TV season based on a given path using a TMdbEasy.EasyClient class instance.
         /// </summary>
         /// <param name="easy">A TMdbEasy.EasyClient class instance to use for the search.</param>
