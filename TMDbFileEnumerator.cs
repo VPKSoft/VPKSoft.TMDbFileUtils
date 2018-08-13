@@ -226,7 +226,7 @@ namespace VPKSoft.TMDbFileUtils
         /// <returns>A string which should be suitable search string for the TMDb for a TV show.</returns>
         private static string GetTVShowSearchString(string path)
         {
-            string searchString = new DirectoryInfo(Path.GetDirectoryName(path)).Name; // the last path part..
+            string searchString = new DirectoryInfo(path).Name; // the last path part..
             searchString = // multiple regular expressions as the programmer is not a guru with them..
                 Regex.Replace(searchString, @"Season [0-9]+", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Trim();
             searchString =
@@ -245,19 +245,28 @@ namespace VPKSoft.TMDbFileUtils
         /// <returns>A TV show episode number.</returns>
         private static int GetTVShowEpisodeNumber(string path)
         {
-            string searchString = new DirectoryInfo(path).Name; // the last path part..
+            string searchString; // = new DirectoryInfo(path).Name; // the last path part..
+
+            if (File.Exists(path))
+            {
+                searchString = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+            }
+            else
+            {
+                searchString = new DirectoryInfo(path).Name;
+            }
 
             string episodeNum = string.Empty; // first assume empty
 
             // multiple regular expressions as the programmer is not a guru with them..
-            if ((episodeNum = Regex.Match(searchString, @"E\d+", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Value).TrimStart('E', 'e') != string.Empty)
+            if ((episodeNum = Regex.Match(searchString, @"E\d+", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Value.TrimStart('E', 'e')) != string.Empty)
             {
                 if (int.TryParse(episodeNum, out _)) // check for a valid integer..
                 {
                     return int.Parse(episodeNum); // ..if the integer was valid, return it..
                 }
             }
-            if ((episodeNum = Regex.Match(searchString, @"X\d+", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Value).TrimStart('X', 'x') != string.Empty)
+            if ((episodeNum = Regex.Match(searchString, @"X\d+", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Value.TrimStart('X', 'x')) != string.Empty)
             {
                 if (int.TryParse(episodeNum, out _)) // check for a valid integer..
                 {
@@ -282,7 +291,15 @@ namespace VPKSoft.TMDbFileUtils
         /// <returns></returns>
         private static int GetTVShowSeason(string path)
         {
-            string searchString = new DirectoryInfo(Path.GetDirectoryName(path)).Name; // the last path part..
+            string searchString = string.Empty;
+            if (File.Exists(path))
+            {
+                searchString = Path.GetDirectoryName(path);
+            }
+            else
+            {
+                searchString = new DirectoryInfo(path).Name; // the last path part..
+            }
 
             searchString = Regex.Match(searchString, @"-?\d+").Value; // find a number from the path part..
             if (int.TryParse(searchString, out _)) // check for a valid integer..
@@ -338,8 +355,11 @@ namespace VPKSoft.TMDbFileUtils
 
                 }
             }
+
+            /* Leads to fail.. so realize name your files better!
             result = // last try is just the episode number..
                 fileEntries.FirstOrDefault(f => f.FileNameNoExtension.Contains(episode.ToString()));
+            */
 
             return result; // return the result whether it's null or not..
         }
@@ -377,8 +397,8 @@ namespace VPKSoft.TMDbFileUtils
         {
             // construct a search string of the given path..
             searchString = GetTVShowSearchString(Path.GetDirectoryName(fileName));
-            season = GetTVShowSeason(Path.GetDirectoryName(fileName)); // extract a season number from the given path..
-            episode = GetTVShowEpisodeNumber(Path.GetFileName(fileName));
+            season = GetTVShowSeason(fileName); // extract a season number from the given path..
+            episode = GetTVShowEpisodeNumber(fileName);
 
             return (season != -1 && episode != -1); // return the value..
         }
@@ -398,11 +418,11 @@ namespace VPKSoft.TMDbFileUtils
             // avoid the null value..
             excludeFileNames = excludeFileNames ?? new List<string>();
 
-            List<string> includeFiles = new List<string>();
+            string fileName = string.Empty;
 
             if (File.Exists(path))
             {
-                includeFiles.Add(path);
+                fileName = path;
                 path = Path.GetDirectoryName(path);
             }
 
@@ -412,14 +432,15 @@ namespace VPKSoft.TMDbFileUtils
 
             // remove the "useless" files from the list..
             List<FileEnumeratorFileEntry> tmpFilesList = new List<FileEnumeratorFileEntry>();
-            foreach(FileEnumeratorFileEntry entry in fileEntries.ToList())
-            {
-                // not in the include list..
-                if (includeFiles.Count > 0 && !includeFiles.Contains(entry.FileName))
-                {
-                    continue; // ..so do continue..
-                }
 
+            // not in the include list..
+            if (fileName != string.Empty)
+            {
+                fileEntries = fileEntries.Where(f => f.FileNameWithPath == fileName);
+            }
+
+            foreach (FileEnumeratorFileEntry entry in fileEntries.ToList())
+            {
                 // excluded from the list..
                 if (excludeFileNames.Contains(entry.FileName))
                 {
@@ -451,7 +472,7 @@ namespace VPKSoft.TMDbFileUtils
             List<TMDbDetail> result = new List<TMDbDetail>();
 
             // search for TV shows base on the search string build from the given directory name..
-            TVShowList list = await televisionApi.SearchTVShowsAsync(searchString).ConfigureAwait(false);
+            TVShowList list = await televisionApi.SearchTVShowsAsync(searchString).ConfigureAwait(false);            
 
             // if something was found..
             if (list != null && list.Total_results > 0) // ..deepen the search..
