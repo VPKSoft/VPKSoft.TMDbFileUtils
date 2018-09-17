@@ -28,9 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using TMdbEasy;
 using TMdbEasy.ApiInterfaces;
@@ -319,6 +317,7 @@ namespace VPKSoft.TMDbFileUtils
             new List<string>(
                 new string[]
                 {
+                    /* the episodes with only one number didn't work..
                     "s{0:00}e{1:00}", // SomeShow S01E01.*
                     "s{0}e{1}",       // SomeShow S1E1.*
                     "s{0}e{1:00}",    // SomeShow S1E01.*
@@ -327,6 +326,13 @@ namespace VPKSoft.TMDbFileUtils
                     "{0}x{1:00}",     // SomeShow 1x01.*
                     "{0}x{1}",        // SomeShow 1x1.*
                     "{0:00}x{1}"      // SomeShow 01x1.*
+                    */
+
+                    // so the limited list goes as follows:
+                    "s{0:00}e{1:00}", // SomeShow S01E01.*
+                    "s{0}e{1:00}",    // SomeShow S1E01.*
+                    "{0:00}x{1:00}",  // SomeShow 01x01.*
+                    "{0}x{1:00}",     // SomeShow 1x01.*
                 });
 
         /// <summary>
@@ -371,6 +377,18 @@ namespace VPKSoft.TMDbFileUtils
         /// <note type="note">Exceptions will occur if the format is incorrect.</note>
         /// </summary>
         public static string TVEpisodeFormat { get; set; } = "{0} {1}, Episode {2} - {3}";
+
+        /// <summary>
+        /// A format of how to give a title to a TV show episode. If given this will override the value of the TVEpisodeFormat property.
+        /// The format goes as follows: 
+        /// #SNUM# = season number.
+        /// #ENUM# = episode number.
+        /// #EPISODE_NAME# = the name of the episode.
+        /// #SERIES_NAME# - the name of the series.
+        /// #SNUM2# = season number in two digits.
+        /// #ENUM2# = episode number in two digits.
+        /// </summary>
+        public static string TVEpisodeFormatCustom { get; set; } = string.Empty;
 
         /// <summary>
         /// Searches the TMDb database for a TV season based on a given path using a TMdbEasy.EasyClient class instance.
@@ -500,9 +518,17 @@ namespace VPKSoft.TMDbFileUtils
                             SeasonID = tvSeason.Id, // the TMDb id for the TV show season..
                             EpisodeID = episode.Id, // the TMDb id for the TV show season episode..
 
-                            // formulate the title base on the TVEpisodeFormat property value..
-                            Title = string.Format(TVEpisodeFormat, seriesName, tvSeason.Name, episode.Episode_number, episode.Name),
-
+                            // formulate the title base on the TVEpisodeFormat or the "overriding" TVEpisodeFormatCustom property value..
+                            Title = TVEpisodeFormatCustom != string.Empty ?
+                            TVEpisodeFormatCustom.
+                                    Replace("#SNUM#", tvSeason.Season_number.ToString()). // the season number as one digit..
+                                    Replace("#ENUM#", episode.Episode_number.ToString()). // the episode number as one digit..
+                                    Replace("#EPISODE_NAME#", episode.Name). // the name of the episode..
+                                    Replace("#SERIES_NAME#", seriesName). // the name of the series..
+                                    Replace("#SNUM2#", string.Format("{0:00}", tvSeason.Season_number)). // the season number as two digits..
+                                    Replace("#ENUM2#", string.Format("{0:00}", episode.Episode_number)) :  // the episode number as two digits..
+                                string.Format(TVEpisodeFormat, seriesName, tvSeason.Name, episode.Episode_number, episode.Name),
+    
                             // set the description..
                             Description = string.IsNullOrEmpty(tvSeason.Overview) ? episode.Overview : tvSeason.Overview,
                             DetailDescription = episode.Overview, // set the detailed description if any..
