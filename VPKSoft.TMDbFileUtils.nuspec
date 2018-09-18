@@ -11,7 +11,7 @@
     <iconUrl>https://www.vpksoft.net/site/VPKSoft.ico</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Changed the default value of the EpisodeNamingStyles property. Added custom formatting for a TV show episode's name.</releaseNotes>
+    <releaseNotes>Fixed custom formatting for a TV show episode's name.</releaseNotes>
     <copyright>Copyright © VPKSoft 2018</copyright>
     <tags>TMDb VPKSoft wrapper</tags>
   </metadata>

@@ -385,6 +385,7 @@ namespace VPKSoft.TMDbFileUtils
         /// #ENUM# = episode number.
         /// #EPISODE_NAME# = the name of the episode.
         /// #SERIES_NAME# - the name of the series.
+        /// #SEASON_NAME# - the name of the season.
         /// #SNUM2# = season number in two digits.
         /// #ENUM2# = episode number in two digits.
         /// </summary>
@@ -525,6 +526,7 @@ namespace VPKSoft.TMDbFileUtils
                                     Replace("#ENUM#", episode.Episode_number.ToString()). // the episode number as one digit..
                                     Replace("#EPISODE_NAME#", episode.Name). // the name of the episode..
                                     Replace("#SERIES_NAME#", seriesName). // the name of the series..
+                                    Replace("#SEASON_NAME#", tvSeason.Name). // the name of the TV show season..
                                     Replace("#SNUM2#", string.Format("{0:00}", tvSeason.Season_number)). // the season number as two digits..
                                     Replace("#ENUM2#", string.Format("{0:00}", episode.Episode_number)) :  // the episode number as two digits..
                                 string.Format(TVEpisodeFormat, seriesName, tvSeason.Name, episode.Episode_number, episode.Name),
